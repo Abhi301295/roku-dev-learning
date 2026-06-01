@@ -30,7 +30,7 @@ function MovieService_getSampleMovies() as object
     ]
 end function
 
-' filter → filter → map + reduce (same pipeline as exercises/day-01/3.6-real-world.brs)
+' filter → filter → map + reduce pipeline.
 function MovieService_getTopPicks() as object
     catalogue = MovieService_getCatalogue()
     recent = MovieUtils_filterArray(catalogue, MovieUtils_isRecent)

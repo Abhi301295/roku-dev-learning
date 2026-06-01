@@ -4,10 +4,16 @@
         "manifest",
         "source/**/*",
         "components/**/*",
-        "images/**/*"
+        "images/**/*",
+        "!build/**/*",
+        "!out/**/*",
+        "!node_modules/**/*"
     ],
     "createPackage": false,
     "autoImportComponentScript": false,
     "stagingDir": "build/staging",
-    "diagnosticFilters": [1129]
+    "diagnosticFilters": [
+        1129,
+        1106
+    ]
 }
