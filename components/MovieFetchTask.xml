@@ -1,26 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--
-  Background fetcher for the movie catalogue.
-
-  Runs on its own logic thread (extends Task). Parents set `url` (optional)
-  and `control = "RUN"`; the Task publishes the result to `response` which
-  the parent observes via observeField.
-
-  response shape:
-    {
-      movies: [ { title, year, rating, durationMins } ... ],
-      source: "remote" | "local",
-      error:  ""       | <message>
-    }
+  Background loader. Reads a JSON catalogue and publishes the parsed result
+  on the `response` interface field. The parent observes that field and
+  reacts when the data is ready.
 -->
 <component name="MovieFetchTask" extends="Task">
 
     <script type="text/brightscript" uri="pkg:/components/MovieFetchTask.brs" />
-    <script type="text/brightscript" uri="pkg:/source/services/MovieService.brs" />
-    <script type="text/brightscript" uri="pkg:/source/utils/MovieUtils.brs" />
 
     <interface>
-        <field id="url" type="string" value="" />
+        <field id="url" type="string" />
         <field id="response" type="assocarray" />
     </interface>
 </component>

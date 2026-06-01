@@ -4,6 +4,7 @@
         "manifest",
         "source/**/*",
         "components/**/*",
+        "assets/**/*",
         "images/**/*",
         "!build/**/*",
         "!out/**/*",
@@ -11,9 +12,5 @@
     ],
     "createPackage": false,
     "autoImportComponentScript": false,
-    "stagingDir": "build/staging",
-    "diagnosticFilters": [
-        1129,
-        1106
-    ]
+    "stagingDir": "build/staging"
 }

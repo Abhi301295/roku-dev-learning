@@ -1,24 +1,29 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--
-  Reusable card component.
+  One tile inside MarkupGrid.
 
-  <interface>  declares custom fields the parent may read / write
-  <children>   declares the visual tree
-
-  Parents set posterUri / title / rating via assignment; MovieCard.brs uses
-  observeField() to react and update the inner Poster + Labels.
+  The grid creates one MovieCard per ContentNode and assigns it via the
+  built-in `itemContent` field. `focusPercent` animates from 0 to 1 as
+  focus enters this card; we use it to fade the focus ring in and out.
 -->
 <component name="MovieCard" extends="Group">
 
     <script type="text/brightscript" uri="pkg:/components/MovieCard.brs" />
 
     <interface>
-        <field id="posterUri" type="string" />
-        <field id="title" type="string" />
-        <field id="rating" type="float" />
+        <field id="itemContent" type="node" />
+        <field id="focusPercent" type="float" />
     </interface>
 
     <children>
+        <!-- 4px border around the card; appears as the focus ring -->
+        <Rectangle id="focusRing"
+            width="208"
+            height="328"
+            translation="[-4, -4]"
+            color="0xF1C232FF"
+            opacity="0" />
+
         <Rectangle id="cardBackground"
             width="200"
             height="320"
@@ -28,7 +33,6 @@
             uri=""
             width="200"
             height="260"
-            translation="[0, 0]"
             loadDisplayMode="scaleToFit" />
 
         <Label id="titleLabel"

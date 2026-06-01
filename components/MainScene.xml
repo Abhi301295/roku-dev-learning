@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--
-  Root Scene.
+  Root Scene. The layout is fixed for 1280x720 (HD).
 
-  bsconfig.json sets `autoImportComponentScript: false`, so the controller
-  script must be declared explicitly. The render thread does not see
-  source/*.brs unless those files are listed here.
+  Node tree (top to bottom in z-order):
+    background      full-screen dark backdrop
+    titleLabel      page title
+    statusLabel     loading / error / "Loaded N movies" message
+    loading         spinner shown while the Task is fetching
+    movieGrid       horizontal row of MovieCards (focusable)
+    hintLabel       remote-control hints at the bottom
+    playerLayer     fullscreen video overlay, hidden by default
+    movieTask       background loader (invisible, no UI)
 -->
 <component name="MainScene" extends="Scene">
 
@@ -30,8 +36,18 @@
             <Font role="font" size="28" />
         </Label>
 
-        <Group id="cardRow"
-            translation="[80, 220]" />
+        <BusySpinner id="loading"
+            translation="[600, 320]"
+            visible="true" />
+
+        <MarkupGrid id="movieGrid"
+            translation="[80, 220]"
+            itemComponentName="MovieCard"
+            numColumns="5"
+            numRows="1"
+            itemSize="[200, 320]"
+            itemSpacing="[30, 0]"
+            drawFocusFeedback="false" />
 
         <Label id="hintLabel"
             text=""
@@ -39,5 +55,27 @@
             color="0x9BB1D6FF">
             <Font role="font" size="22" />
         </Label>
+
+        <Group id="playerLayer" visible="false">
+            <Rectangle id="playerBackground"
+                width="1280"
+                height="720"
+                color="0x000000FF" />
+
+            <Video id="moviePlayer"
+                width="1280"
+                height="720"
+                enableUI="true"
+                enableTrickPlay="true"
+                notificationInterval="1" />
+
+            <Label id="playerTitle"
+                translation="[40, 30]"
+                color="0xFFFFFFFF">
+                <Font role="font" size="28" />
+            </Label>
+        </Group>
+
+        <MovieFetchTask id="movieTask" />
     </children>
 </component>
