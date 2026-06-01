@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Chapter 1: Hello World Scene (https://medium.com/@krishna.kumar.chaturvedi/...dc2ff85c4cd2)
+  Chapter 2: Hosts a row of reusable MovieCard components (https://...d91a5e3a6c64)
+
+  bsconfig.json sets `autoImportComponentScript: false`, so every script the
+  component needs MUST be declared here. SceneGraph components run on the
+  render thread with their own script context — they cannot see `source/*.brs`
+  unless explicitly included below.
+-->
+<component name="MainScene" extends="Scene">
+
+    <script type="text/brightscript" uri="pkg:/components/MainScene.brs" />
+    <script type="text/brightscript" uri="pkg:/source/utils/MovieUtils.brs" />
+    <script type="text/brightscript" uri="pkg:/source/utils/StringUtils.brs" />
+    <script type="text/brightscript" uri="pkg:/source/services/MovieService.brs" />
+
+    <children>
+        <Rectangle id="background"
+            width="1280"
+            height="720"
+            color="0x101218FF" />
+
+        <Label id="helloLabel"
+            text="Hello Roku!"
+            translation="[80, 60]"
+            color="0xFFFFFFFF">
+            <Font role="font" size="56" />
+        </Label>
+
+        <Label id="subtitleLabel"
+            text="Chapters 1-3 — SceneGraph + BrightScript fundamentals"
+            translation="[80, 140]"
+            color="0x9BB1D6FF">
+            <Font role="font" size="28" />
+        </Label>
+
+        <Group id="cardRow"
+            translation="[80, 220]" />
+
+        <Label id="statusLabel"
+            text=""
+            translation="[80, 660]"
+            color="0x9BB1D6FF">
+            <Font role="font" size="22" />
+        </Label>
+    </children>
+</component>

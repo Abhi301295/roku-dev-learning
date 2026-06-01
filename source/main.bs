@@ -9,11 +9,27 @@
 '   source/models/Movie.bs               → class Movie
 '   source/models/MovieCollection.bs     → class MovieCollection
 '   source/models/MovieService.bs        → class MovieService
+'   components/MainScene.xml/.brs        → Chapter 1 Hello World scene + Chapter 2 host
+'   components/MovieCard.xml/.brs        → Chapter 2 reusable card component
 '
+' Chapter 3 lifecycle (from the blog):
+'   1. Roku calls Main() below
+'   2. We create an roSGScreen, attach a MessagePort, CreateScene("MainScene")
+'   3. MainScene XML parses, MainScene.brs init() runs on the render thread
+'   4. screen.show() draws the UI
+'   5. We loop on the port waiting for isScreenClosed (BACK button)
 sub Main()
     print "Roku TV Learning - channel started"
     print ""
 
+    runConsoleDemos()
+    showScene()
+end sub
+
+' Everything below runs on the MAIN thread and only prints to the debug
+' console. The render thread never sees these — it has its own script scope
+' (see components/MainScene.xml for the scripts it does include).
+sub runConsoleDemos()
     movies = getMovies()
 
     ' --- Challenge 1: filterByRating ---
@@ -72,7 +88,9 @@ sub Main()
     print ""
 
     ' ============================================================
-    ' BrighterScript Classes — challenges 1-4
+    ' BrighterScript Classes — challenges 1-4 (stay on the main thread;
+    ' the render thread cannot see source/models/*.brs unless explicitly
+    ' included via <script> tags in a component XML)
     ' ============================================================
 
     ' Challenge 1+2: instantiate Movie + getDisplayTitle()
@@ -80,7 +98,7 @@ sub Main()
     ' `movie` would shadow the class constructor `Movie()`. Use a different name.
     print "[Class Movie]"
     mv = new Movie("Interstellar", 2014, 8.6, 169)
-    print mv.getDisplayTitle() ' Interstellar (2014)
+    print mv.getDisplayTitle()
     print "rating:       " + mv.rating.ToStr()
     print "durationMins: " + StrI(mv.durationMins).Trim()
     print ""
@@ -104,4 +122,28 @@ sub Main()
     for each item in catalogue
         print "- " + item.getDisplayTitle() + " (" + item.rating.ToStr() + ", " + StrI(item.durationMins).Trim() + " min)"
     end for
+    print ""
+end sub
+
+' Chapter 1: create the SceneGraph screen, hand off to MainScene, loop on
+' input events until BACK closes the channel.
+sub showScene()
+    print "[Main] launching SceneGraph"
+
+    screen = CreateObject("roSGScreen")
+    port = CreateObject("roMessagePort")
+    screen.setMessagePort(port)
+
+    screen.CreateScene("MainScene")
+    screen.show()
+
+    while true
+        msg = wait(0, port)
+        if type(msg) = "roSGScreenEvent" then
+            if msg.isScreenClosed() then
+                print "[Main] screen closed, exiting"
+                return
+            end if
+        end if
+    end while
 end sub

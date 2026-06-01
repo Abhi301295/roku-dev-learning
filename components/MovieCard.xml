@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Chapter 2: Reusable SceneGraph component.
+
+  Anatomy:
+    <interface>  declares custom fields callers may read / write
+                 (the equivalent of a React `props` contract)
+    <children>   declares the visual tree (Roku built-in nodes)
+
+  Callers set posterUri / title / rating via assignment; MovieCard.brs uses
+  observeField() to react and update the inner Poster + Labels.
+-->
+<component name="MovieCard" extends="Group">
+
+    <script type="text/brightscript" uri="pkg:/components/MovieCard.brs" />
+
+    <interface>
+        <field id="posterUri" type="string" />
+        <field id="title" type="string" />
+        <field id="rating" type="float" />
+    </interface>
+
+    <children>
+        <Rectangle id="cardBackground"
+            width="200"
+            height="320"
+            color="0x1B2030FF" />
+
+        <Poster id="poster"
+            uri=""
+            width="200"
+            height="260"
+            translation="[0, 0]"
+            loadDisplayMode="scaleToFit" />
+
+        <Label id="titleLabel"
+            text=""
+            translation="[10, 268]"
+            width="180"
+            maxLines="1"
+            color="0xFFFFFFFF">
+            <Font role="font" size="22" />
+        </Label>
+
+        <Label id="ratingLabel"
+            text=""
+            translation="[10, 294]"
+            color="0xF1C232FF">
+            <Font role="font" size="18" />
+        </Label>
+    </children>
+</component>
