@@ -1,14 +1,14 @@
-' Channel entry point. Roku invokes Main() on launch.
+' Channel entry point. Roku calls Main() automatically on launch.
 '
-' Project layout:
-'   source/main.bs                       → channel entry (this file)
-'   source/services/MovieService.brs     → offline movie catalogue
-'   components/MainScene.xml/.brs        → root Scene
-'   components/MovieCard.xml/.brs        → reusable card
-'   components/MovieFetchTask.xml/.brs   → async movie loader (Task node)
+' Project layout
+'   source/main.bs                       channel entry
+'   components/MainScene.xml/.brs        root Scene
+'   components/MovieCard.xml/.brs        one item inside the grid
+'   components/MovieFetchTask.xml/.brs   loads data off the render thread
+'   assets/movies.json                   movie catalogue (single source of truth)
 
 sub Main()
-    print "Roku TV Learning - channel started"
+    print "[Main] channel started"
 
     screen = CreateObject("roSGScreen")
     port = CreateObject("roMessagePort")
@@ -17,6 +17,9 @@ sub Main()
     screen.CreateScene("MainScene")
     screen.show()
 
+    ' Block until Roku tells us the screen was closed (user pressed BACK at
+    ' the root of MainScene). Without this loop, Main() would return and the
+    ' channel would exit immediately.
     while true
         msg = wait(0, port)
         if type(msg) = "roSGScreenEvent" then
