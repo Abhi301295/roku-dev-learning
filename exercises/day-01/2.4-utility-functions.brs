@@ -3,6 +3,28 @@
 ' Most channels build a small library of pure helpers. They take input,
 ' return output, and don't mutate global state.
 '
+' BrightScript                              JavaScript equivalent              Notes
+' ----------------------------------------  ---------------------------------  -----------------------
+' a \ b                                     Math.floor(a / b)                  BRS: integer division
+'                                           (a / b) | 0                        JS has no `\` operator
+' a - (b * c)                               a - b * c                          same arithmetic
+' Len(s)                                    s.length                           BRS function vs JS prop
+' StrI(n).Trim()                            String(n)                          stringify integer
+' "$" + StrI(n).Trim() + ".00"              `$${n}.00`                         template literal in JS
+' n < 10                                    n < 10                             same
+' value = invalid                           value == null                      `==` matches null+undefined
+' type(v) = "String" or                     typeof v === "string"              BRS: also check "roString"
+'   type(v) = "roString"                                                       (boxed form)
+' arr.push(x)                               arr.push(x)                        same
+' for each x in arr                         for (const x of arr)
+'   out.push(x)                               out.push(x)
+' end for                                   }
+'
+' "Default fallback" pattern:
+' if isNonEmpty(a) then return a            return a ?? b ?? c                 JS nullish-coalescing
+' if isNonEmpty(b) then return b            (only if "non-empty" = "not null")
+' return c
+'
 ' Run: brs utility-functions.brs
 sub Main()
     print formatPrice(199)

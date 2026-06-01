@@ -7,6 +7,19 @@
 '   - Two ways to stringify an integer: StrI(n).Trim() and n.ToStr()
 '   - `arr.count()` on an empty array
 '
+' BrightScript                    JavaScript equivalent              Notes
+' ------------------------------  ---------------------------------  ---------------------------
+' invalid                         null  /  undefined                 BRS has one "missing" value;
+'                                                                    JS has two
+' x = invalid                     x = null                           explicit "no value" assignment
+' if x = invalid                  if (x == null)                     `==` matches null AND undefined
+' obj.missingKey -> invalid       obj.missingKey -> undefined        no exception in either
+' StrI(n).Trim()                  String(n)  /  n.toString()         BRS PascalCase + leading-space
+' n.ToStr()                       n.toString()                       both produce the digits
+' arr.count()                     arr.length                         method vs property
+' [].count()  // 0                [].length     // 0
+' print obj.x; obj.y              console.log(obj.x, obj.y)          BRS `;` keeps items on same line
+'
 ' Run: brs api-response.brs
 sub Main()
     response = {
