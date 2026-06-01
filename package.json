@@ -1,0 +1,8 @@
+{
+    "name": "roku-tv-learning",
+    "private": true,
+    "scripts": {
+        "build": "bash scripts/build.sh",
+        "package": "bash scripts/roku-package.sh"
+    }
+}

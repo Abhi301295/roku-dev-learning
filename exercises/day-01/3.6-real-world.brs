@@ -26,19 +26,70 @@
 ' Run: brs 3.6-real-world.brs
 sub Main()
     catalogue = [
-        { title: "Inception",     year: 2010, rating: 8.8, durationMins: 148 }
-        { title: "Interstellar",  year: 2014, rating: 8.6, durationMins: 169 }
-        { title: "Tenet",         year: 2020, rating: 7.4, durationMins: 150 }
-        { title: "Oppenheimer",   year: 2023, rating: 8.3, durationMins: 180 }
-        { title: "Dunkirk",       year: 2017, rating: 7.9, durationMins: 106 }
-        { title: "The Prestige",  year: 2006, rating: 8.5, durationMins: 130 }
+        { title: "Inception", year: 2010, rating: 8.8, durationMins: 148 }
+        { title: "Interstellar", year: 2014, rating: 8.6, durationMins: 169 }
+        { title: "Tenet", year: 2020, rating: 7.4, durationMins: 150 }
+        { title: "Oppenheimer", year: 2023, rating: 8.3, durationMins: 180 }
+        { title: "Dunkirk", year: 2017, rating: 7.9, durationMins: 106 }
+        { title: "The Prestige", year: 2006, rating: 8.5, durationMins: 130 }
     ]
 
+    movies = [
+        {
+            id: 1
+            title: "Inception"
+            rating: 8.8
+            genre: "Sci-Fi"
+        }
+        {
+            id: 2
+            title: "Batman Begins"
+            rating: 8.2
+            genre: "Action"
+        }
+        {
+            id: 3
+            title: "The Dark Knight"
+            rating: 9.0
+            genre: "Action"
+        }
+    ]
+    apiResponse = [
+        {
+            movie_name: "Inception"
+            movie_rating: 8.8
+        }
+        {
+            movie_name: "Interstellar"
+            movie_rating: 8.7
+        }
+    ]
+    print safeGetTitle(invalid)
+    print safeGetTitle({
+        rating: 8.8
+    })
+    print safeGetTitle({
+        title: "Inception"
+    })
+
+    movie = getHighestRatedMovie(movies)
+
+    print movie.title
+
+    actionMovies = getMoviesByGenre(movies, "Action")
+    print actionMovies.count()
+
+    movie = findMovieById(movies, 2)
+
+    print movie.title
+
+    mappedMovies = mapMovies(apiResponse)
+    print mappedMovies.count()
     ' Pipeline: pick recent (>=2014) AND well-rated (>=8.0), then build labels,
     ' then total their runtime.
-    recent       = filterArray(catalogue, isRecent)
-    wellRated    = filterArray(recent, isWellRated)
-    labels       = mapArray(wellRated, toLabel)
+    recent = filterArray(catalogue, isRecent)
+    wellRated = filterArray(recent, isWellRated)
+    labels = mapArray(wellRated, toLabel)
     totalMinutes = reduceArray(wellRated, addDuration, 0)
 
     print "[picks]"
@@ -92,7 +143,59 @@ function addDuration(total as integer, movie as object) as integer
 end function
 
 function formatRuntime(totalMinutes as integer) as string
-    hours   = totalMinutes \ 60
+    hours = totalMinutes \ 60
     minutes = totalMinutes - (hours * 60)
     return StrI(hours).Trim() + "h " + StrI(minutes).Trim() + "m"
+end function
+
+' Returns movie.title when present, otherwise "Unknown Movie".
+'   safeGetTitle(invalid)              -> "Unknown Movie"
+'   safeGetTitle({ rating: 8.8 })      -> "Unknown Movie"   (no title key)
+'   safeGetTitle({ title: "Inception" }) -> "Inception"
+function safeGetTitle(movie as dynamic) as string
+    if movie = invalid then return "Unknown Movie"
+    if movie.title = invalid then return "Unknown Movie"
+    return movie.title
+end function
+
+function getHighestRatedMovie(movies as object) as object
+    if movies.count() = 0 then
+        return invalid
+    end if
+    highestRated = movies[0]
+    for each movie in movies
+        if movie.rating > highestRated.rating then
+            highestRated = movie
+        end if
+    end for
+    return highestRated
+end function
+
+
+function getMoviesByGenre(movies as object, genre as string) as object
+    out = []
+    for each movie in movies
+        if movie.genre = genre then out.push(movie)
+    end for
+    return out
+end function
+
+
+function findMovieById(movies as object, id as integer) as object
+    for each movie in movies
+        if movie.id = id then return movie
+    end for
+    return invalid
+end function
+
+function mapMovies(apiResponse as object) as object
+    out = []
+    for each item in apiResponse
+        out.push({
+            id: item.movie_id
+            title: item.movie_name
+            rating: item.movie_rating
+        })
+    end for
+    return out
 end function

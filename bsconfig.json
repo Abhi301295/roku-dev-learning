@@ -1,0 +1,13 @@
+{
+    "rootDir": ".",
+    "files": [
+        "manifest",
+        "source/**/*",
+        "components/**/*",
+        "images/**/*"
+    ],
+    "createPackage": false,
+    "autoImportComponentScript": false,
+    "stagingDir": "build/staging",
+    "diagnosticFilters": [1129]
+}
