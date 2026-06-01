@@ -2,9 +2,7 @@
 '
 ' Project layout:
 '   source/main.bs                       → channel entry (this file)
-'   source/services/MovieService.brs     → movie catalogue
-'   source/utils/MovieUtils.brs          → list helpers
-'   source/utils/StringUtils.brs         → string helpers
+'   source/services/MovieService.brs     → offline movie catalogue
 '   components/MainScene.xml/.brs        → root Scene
 '   components/MovieCard.xml/.brs        → reusable card
 '   components/MovieFetchTask.xml/.brs   → async movie loader (Task node)
