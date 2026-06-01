@@ -1,8 +1,7 @@
-' MovieCard — Chapter 2 reusable component.
+' MovieCard controller.
 '
-' Mirrors the blog example: a Group with three interface fields and one
-' observer per field. Updating m.top.title from a parent automatically
-' triggers onTitleChange() here, which then mutates the inner Label.
+' Three interface fields wired to inner nodes via observeField — updating
+' m.top.title from a parent triggers onTitleChange() which mutates the Label.
 
 sub init()
     m.poster = m.top.findNode("poster")

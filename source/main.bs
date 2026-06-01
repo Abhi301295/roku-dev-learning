@@ -1,134 +1,16 @@
 ' Channel entry point. Roku invokes Main() on launch.
-' Exercises live under /exercises and are NOT packaged with the channel.
 '
-' Project layout (mixed BrightScript + BrighterScript, no imports):
-'   source/main.bs                       → entry; uses .bs because it instantiates classes
-'   source/utils/MovieUtils.brs          → pure helpers (MovieUtils_*)
-'   source/utils/StringUtils.brs         → string helpers (StringUtils_*)
-'   source/services/MovieService.brs     → function-based service (MovieService_*)
-'   source/models/Movie.bs               → class Movie
-'   source/models/MovieCollection.bs     → class MovieCollection
-'   source/models/MovieService.bs        → class MovieService
-'   components/MainScene.xml/.brs        → Chapter 1 Hello World scene + Chapter 2 host
-'   components/MovieCard.xml/.brs        → Chapter 2 reusable card component
-'
-' Chapter 3 lifecycle (from the blog):
-'   1. Roku calls Main() below
-'   2. We create an roSGScreen, attach a MessagePort, CreateScene("MainScene")
-'   3. MainScene XML parses, MainScene.brs init() runs on the render thread
-'   4. screen.show() draws the UI
-'   5. We loop on the port waiting for isScreenClosed (BACK button)
+' Project layout:
+'   source/main.bs                       → channel entry (this file)
+'   source/services/MovieService.brs     → movie catalogue
+'   source/utils/MovieUtils.brs          → list helpers
+'   source/utils/StringUtils.brs         → string helpers
+'   components/MainScene.xml/.brs        → root Scene
+'   components/MovieCard.xml/.brs        → reusable card
+'   components/MovieFetchTask.xml/.brs   → async movie loader (Task node)
+
 sub Main()
     print "Roku TV Learning - channel started"
-    print ""
-
-    runConsoleDemos()
-    showScene()
-end sub
-
-' Everything below runs on the MAIN thread and only prints to the debug
-' console. The render thread never sees these — it has its own script scope
-' (see components/MainScene.xml for the scripts it does include).
-sub runConsoleDemos()
-    movies = getMovies()
-
-    ' --- Challenge 1: filterByRating ---
-    print "[Challenge 1: ratings >= 8.5]"
-    highRated = MovieUtils_filterByRating(movies, 8.5)
-    for each item in highRated
-        print item.title
-    end for
-    print ""
-
-    ' --- Challenge 2: findByTitle ---
-    print "[Challenge 2: findByTitle]"
-    found = MovieUtils_findByTitle(movies, "Tenet")
-    if found = invalid then
-        print "not found"
-    else
-        print found.title
-    end if
-
-    missing = MovieUtils_findByTitle(movies, "Avatar")
-    if missing = invalid then print "Avatar -> invalid"
-    print ""
-
-    ' --- Challenge 3: averageRating ---
-    print "[Challenge 3: averageRating]"
-    avg = MovieUtils_averageRating(movies)
-    print "average: " + avg.ToStr()
-    print ""
-
-    ' --- Challenge 4: totalWatchTime ---
-    print "[Challenge 4: totalWatchTime]"
-    totalMins = MovieUtils_totalWatchTime(movies)
-    print "total minutes: " + StrI(totalMins).Trim()
-    print "as h/m:        " + MovieUtils_formatRuntime(totalMins)
-    print ""
-
-    ' --- Challenge 5: mapTitles (Roku's arr.map(m => m.title)) ---
-    print "[Challenge 5: mapTitles]"
-    titles = MovieUtils_mapTitles(movies)
-    for each t in titles
-        print "- " + t
-    end for
-    print ""
-
-    ' --- Bonus: same five operations expressed via the generic helpers ---
-    print "[Bonus: generic helpers]"
-    actionMovies = MovieService_getMoviesByGenre(MovieService_getSampleMovies(), "Action")
-    print "Action count: " + StrI(actionMovies.count()).Trim()
-
-    picks = MovieService_getTopPicks()
-    print "[top picks]"
-    for each lbl in picks.labels
-        print "- " + lbl
-    end for
-    print "total runtime: " + MovieUtils_formatRuntime(picks.totalMinutes)
-    print ""
-
-    ' ============================================================
-    ' BrighterScript Classes — challenges 1-4 (stay on the main thread;
-    ' the render thread cannot see source/models/*.brs unless explicitly
-    ' included via <script> tags in a component XML)
-    ' ============================================================
-
-    ' Challenge 1+2: instantiate Movie + getDisplayTitle()
-    ' NOTE: BrightScript identifiers are case-insensitive, so a local named
-    ' `movie` would shadow the class constructor `Movie()`. Use a different name.
-    print "[Class Movie]"
-    mv = new Movie("Interstellar", 2014, 8.6, 169)
-    print mv.getDisplayTitle()
-    print "rating:       " + mv.rating.ToStr()
-    print "durationMins: " + StrI(mv.durationMins).Trim()
-    print ""
-
-    ' Challenge 3: MovieCollection
-    print "[Class MovieCollection]"
-    collection = new MovieCollection()
-    collection.addMovie(new Movie("Inception", 2010, 8.8, 148))
-    collection.addMovie(new Movie("Tenet", 2020, 7.4, 150))
-    collection.addMovie(new Movie("Oppenheimer", 2023, 8.3, 180))
-
-    top = collection.getHighestRatedMovie()
-    print "highest:       " + top.getDisplayTitle() + " - " + top.rating.ToStr()
-    print "average:       " + collection.getAverageRating().ToStr()
-    print ""
-
-    ' Challenge 4: MovieService class returning Movie instances
-    print "[Class MovieService]"
-    service = new MovieService()
-    catalogue = service.getMovies()
-    for each item in catalogue
-        print "- " + item.getDisplayTitle() + " (" + item.rating.ToStr() + ", " + StrI(item.durationMins).Trim() + " min)"
-    end for
-    print ""
-end sub
-
-' Chapter 1: create the SceneGraph screen, hand off to MainScene, loop on
-' input events until BACK closes the channel.
-sub showScene()
-    print "[Main] launching SceneGraph"
 
     screen = CreateObject("roSGScreen")
     port = CreateObject("roMessagePort")

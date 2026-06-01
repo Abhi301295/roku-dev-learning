@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--
-  Chapter 2: Reusable SceneGraph component.
+  Reusable card component.
 
-  Anatomy:
-    <interface>  declares custom fields callers may read / write
-                 (the equivalent of a React `props` contract)
-    <children>   declares the visual tree (Roku built-in nodes)
+  <interface>  declares custom fields the parent may read / write
+  <children>   declares the visual tree
 
-  Callers set posterUri / title / rating via assignment; MovieCard.brs uses
+  Parents set posterUri / title / rating via assignment; MovieCard.brs uses
   observeField() to react and update the inner Poster + Labels.
 -->
 <component name="MovieCard" extends="Group">
