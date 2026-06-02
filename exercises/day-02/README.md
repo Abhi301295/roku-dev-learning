@@ -14,11 +14,10 @@ exercises/day-02/
 │   ├── 1.1-create-and-inspect.brs
 │   ├── ...
 │   └── 4-class-challenges.bs
-├── 02-Observers/        ← Observers & Reactive Programming
-│   ├── 1.1-pattern-fundamentals.brs
-│   ├── ...
-│   └── 4-observable-class.bs
-└── 03-<NextTopic>/      ← added when we move on
+└── 02-Observers/        ← Observers & Reactive Programming
+    ├── 1.1-pattern-fundamentals.brs
+    ├── ...
+    └── 5-mvvm-challenges.bs
 ```
 
 The number tells you the order to learn the topics; the file numbers inside tell you the order within a topic. Adding a new topic later never disturbs the existing order.
