@@ -1,0 +1,135 @@
+' Day 2 / Section 4 — Challenges (BrighterScript classes)
+'
+' Three connected challenges that build a tiny version of Roku's
+' ContentNode using a BrighterScript `class`. BrighterScript adds class
+' syntax on top of BrightScript and transpiles to plain BRS, so we
+' compile once and run the output.
+'
+' BrighterScript                              JavaScript / TypeScript equivalent     Notes
+' ------------------------------------------  ------------------------------------- ---------------------------
+' class ContentNode                            class ContentNode {                    .bs only; .brs has no class
+'   public title as string                       title: string;                       fields are typed
+'   public children as object = []               children: ContentNode[] = [];        default value at declare
+'   function addChild(...) as void               addChild(...) { ... }                method
+' end class                                    }                                      `m.field` inside methods
+' n = new ContentNode("Movies")                new ContentNode("Movies")              `new` then constructor
+' sub new(title as string)                       constructor(title: string) {         class constructor name = `new`
+'     m.title = title                             this.title = title;                 `m` ≈ `this`
+' end sub                                       }
+' m.children.push(child)                       this.children.push(child)             push onto array field
+'
+' --- Run ---
+' BrighterScript files are NOT executable by the `brs` CLI directly.
+' Transpile to plain BRS first, then run. From this folder:
+'
+'   mkdir -p .build
+'   bsc --rootDir . --files 4-class-challenges.bs \
+'       --stagingDir .build --createPackage=false --copyToStaging=true
+'   cd .build && brs 4-class-challenges.brs
+'
+' (`bsc` is installed globally via `npm install -g brighterscript`, see the
+' top-level README. The single BS1013 "not referenced" warning is expected
+' — exercises are intentionally not wired into the channel build.)
+'
+' Expected output (challenge 3):
+'   Movies
+'     Sci-Fi
+'       Interstellar
+'       Inception
+'     Drama
+'       Oppenheimer
+'
+' --------------------------------------------------------------------
+' Challenge 1 — define the class
+' --------------------------------------------------------------------
+'
+' A simplified ContentNode with:
+'   title          string
+'   children       array of ContentNode
+'   addChild()     append a child
+'   getChildCount() return the number of children
+class ContentNode
+    public title as string = ""
+    public children as object = []
+
+    sub new(title as string)
+        m.title = title
+        m.children = []
+    end sub
+
+    sub addChild(child as ContentNode)
+        m.children.push(child)
+    end sub
+
+    function getChildCount() as integer
+        return m.children.count()
+    end function
+end class
+
+' --------------------------------------------------------------------
+' Challenge 2 — build this tree:
+'
+'   Movies
+'    ├── Sci-Fi
+'    │    ├── Interstellar
+'    │    └── Inception
+'    └── Drama
+'         └── Oppenheimer
+' --------------------------------------------------------------------
+function buildMovieTree() as ContentNode
+    root = new ContentNode("Movies")
+
+    scifi = new ContentNode("Sci-Fi")
+    scifi.addChild(new ContentNode("Interstellar"))
+    scifi.addChild(new ContentNode("Inception"))
+
+    drama = new ContentNode("Drama")
+    drama.addChild(new ContentNode("Oppenheimer"))
+
+    root.addChild(scifi)
+    root.addChild(drama)
+    return root
+end function
+
+' --------------------------------------------------------------------
+' Challenge 3 — printTree
+'
+' Recursive walk. Each level indents two spaces deeper than its parent.
+' --------------------------------------------------------------------
+sub printTree(node as ContentNode)
+    printIndented(node, 0)
+end sub
+
+sub printIndented(node as ContentNode, depth as integer)
+    if node = invalid then return
+
+    pad = ""
+    i = 0
+    while i < depth
+        pad = pad + "  "
+        i = i + 1
+    end while
+    print pad + node.title
+
+    for each child in node.children
+        printIndented(child, depth + 1)
+    end for
+end sub
+
+' --------------------------------------------------------------------
+' Entry point: run all three challenges.
+' --------------------------------------------------------------------
+sub Main()
+    ' Challenge 1 sanity check.
+    standalone = new ContentNode("Standalone")
+    standalone.addChild(new ContentNode("Kid A"))
+    standalone.addChild(new ContentNode("Kid B"))
+    print "[challenge 1] '" + standalone.title + "' has " + standalone.getChildCount().ToStr() + " children"
+
+    ' Challenge 2 + 3.
+    root = buildMovieTree()
+    print "[challenge 2] root '" + root.title + "' has " + root.getChildCount().ToStr() + " sections"
+    print ""
+    print "[challenge 3] printTree:"
+    printTree(root)
+end sub

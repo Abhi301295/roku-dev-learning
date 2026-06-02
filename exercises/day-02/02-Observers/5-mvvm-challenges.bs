@@ -1,0 +1,159 @@
+' Day 2 / Observers / Section 5 — MVVM challenges (ObservableField + ViewModel)
+'
+' Where this fits:
+'   Section 1.x — pattern with an AA shim (no SceneGraph needed)
+'   Section 2.x — real Roku observeField API on a roSGNode
+'   Section 4   — one big EventBus (many keys, one container)
+'   Section 5   — one observable per field, COMPOSED inside a typed
+'                 ViewModel object (this file)
+'
+' Section 5 is the pattern most modern UI codebases land on (think MobX
+' `observable`, SwiftUI `@Published`, Vue `ref`): every reactive field is
+' its own little stream of changes, and screens own a ViewModel that
+' bundles several streams together. On Roku, the same idea maps cleanly
+' to a `roSGNode` whose individual fields are independently observed —
+' but using a hand-rolled class lets us test the pattern in the brs CLI
+' without a render thread.
+'
+' --- Run ---
+'   cd exercises/day-02/02-Observers
+'   mkdir -p .build
+'   bsc --rootDir . --files 5-mvvm-challenges.bs \
+'       --stagingDir .build --createPackage=false --copyToStaging=true
+'   cd .build && brs 5-mvvm-challenges.brs
+'
+' Expected output:
+'   [challenge 1+2] direct ObservableField:
+'   Title changed to Interstellar
+'
+'   [challenge 3+4] MovieViewModel composes ObservableFields:
+'   Movie title updated
+'
+'   [bonus] two subscribers; one setValue -> both fire
+'   Movie title updated
+'   Title changed to Inception 4 (4K Remaster)
+
+' --------------------------------------------------------------------
+' Challenge 1 — class ObservableField
+' --------------------------------------------------------------------
+'
+'   Properties
+'     value      dynamic — current value of this field
+'     listeners  object  — array of function references
+'
+'   Methods
+'     setValue(newValue)   updates the value; fires every listener iff
+'                          the new value actually differs from the old
+'                          (matches Roku's default observeField behaviour)
+'     getValue()           returns the current value
+'     subscribe(callback)  registers a callback. Callback signature:
+'                              sub callback(newValue as dynamic)
+'
+' Senior gotchas baked in:
+'   - BrightScript can compare primitives with `=` but throws on
+'     AA / array equality. The shim guards the suppression check with
+'     `isPrimitive(...)`. Object-typed fields therefore always fire,
+'     which matches Roku's behaviour for `node` / `assocarray` fields.
+'   - The class name `ObservableField` is distinct from `Observable`
+'     in file 4 so the two patterns can live in the same project.
+class ObservableField
+    public value as dynamic = invalid
+    public listeners as object = []
+
+    sub new(initial as dynamic)
+        m.value = initial
+        m.listeners = []
+    end sub
+
+    sub subscribe(callback as function)
+        m.listeners.push(callback)
+    end sub
+
+    sub setValue(newValue as dynamic)
+        if isPrimitiveValue(m.value) and isPrimitiveValue(newValue) and m.value = newValue then
+            return                              ' equal-value suppression
+        end if
+        m.value = newValue
+        for each cb in m.listeners
+            cb(m.value)
+        end for
+    end sub
+
+    function getValue() as dynamic
+        return m.value
+    end function
+end class
+
+' --------------------------------------------------------------------
+' Challenge 3 — class MovieViewModel
+' --------------------------------------------------------------------
+'
+'   Fields
+'     title   ObservableField (string inside)
+'     rating  ObservableField (float inside)
+'
+' Composition, not inheritance: a ViewModel is a *bag* of independent
+' ObservableFields. Each one is its own subscribe-target. This means UI
+' code can wire its title label to `vm.title.subscribe(...)` and its
+' rating badge to `vm.rating.subscribe(...)` without ever knowing about
+' each other.
+'
+' This is the same shape as a roSGNode with two fields and two
+' observers, just expressed as plain BrighterScript so we can test it.
+class MovieViewModel
+    public title as ObservableField = invalid
+    public rating as ObservableField = invalid
+
+    sub new(initialTitle as string, initialRating as float)
+        m.title = new ObservableField(initialTitle)
+        m.rating = new ObservableField(initialRating)
+    end sub
+end class
+
+' --------------------------------------------------------------------
+' Reactions used by Main()
+' --------------------------------------------------------------------
+sub onTitleChange(newValue as dynamic)
+    print "Title changed to " ; newValue
+end sub
+
+sub onTitleUpdated(newValue as dynamic)
+    print "Movie title updated"
+end sub
+
+' --------------------------------------------------------------------
+' Entry point
+' --------------------------------------------------------------------
+sub Main()
+    ' --- Challenge 1 + 2 — standalone ObservableField ---
+    print "[challenge 1+2] direct ObservableField:"
+    titleField = new ObservableField("Inception")
+    titleField.subscribe(onTitleChange)
+    titleField.setValue("Interstellar")       ' fires -> "Title changed to Interstellar"
+
+    ' --- Challenge 3 + 4 — composed inside a ViewModel ---
+    print ""
+    print "[challenge 3+4] MovieViewModel composes ObservableFields:"
+    movie = new MovieViewModel("Inception", 8.8)
+    movie.title.subscribe(onTitleUpdated)
+    movie.title.setValue("Oppenheimer")        ' fires -> "Movie title updated"
+
+    ' --- Bonus — many listeners on the same field ---
+    print ""
+    print "[bonus] two subscribers; one setValue -> both fire"
+    movie.title.subscribe(onTitleChange)       ' add a second listener
+    movie.title.setValue("Inception 4 (4K Remaster)")
+end sub
+
+' --------------------------------------------------------------------
+' Helper kept outside the classes so callers don't accidentally rely on
+' it as part of the public API. Used inside `setValue` to decide whether
+' the equality short-circuit is safe.
+' --------------------------------------------------------------------
+function isPrimitiveValue(v as dynamic) as boolean
+    if v = invalid then return true
+    t = type(v)
+    if t = "Integer" or t = "Float" or t = "Double" or t = "LongInteger" then return true
+    if t = "String" or t = "roString" or t = "Boolean" then return true
+    return false
+end function

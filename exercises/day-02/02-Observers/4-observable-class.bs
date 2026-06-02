@@ -1,0 +1,201 @@
+' Day 2 / Observers / Section 4 — Challenges (BrighterScript class)
+'
+' Same scope as ContentNode's `4-class-challenges.bs`. Builds the
+' observer pattern as a real BrighterScript `class` you can reuse.
+'
+' Why a class (vs the AA shim from 1.x)?
+'   - One named type with typed methods.
+'   - bsc validates calls (no `m.subscibres` typos).
+'   - You can put it in a shared module later and import it across
+'     screens (`source/lib/Observable.bs` etc.).
+'
+' --- Run ---
+'   cd exercises/day-02/02-Observers
+'   mkdir -p .build
+'   bsc --rootDir . --files 4-observable-class.bs \
+'       --stagingDir .build --createPackage=false --copyToStaging=true
+'   cd .build && brs 4-observable-class.brs
+'
+' Expected output:
+'   [challenge 1] subscribed; setValue(5) fires once -> 5
+'   [challenge 2] subscribed; setValue(5) again is a no-op (equal)
+'   [challenge 3] two subscribers; one setValue -> both fire
+'   [challenge 4] unsubscribe one; only the other fires
+'   [challenge 5] EventBus: title fires title observers, count fires count observers
+'
+' --------------------------------------------------------------------
+' Challenge 1 — class Observable<T> (single field, single value)
+' --------------------------------------------------------------------
+'
+' Implement:
+'   class Observable
+'       field       string
+'       value       dynamic
+'       subscribers as object              ' array of function references
+'       sub subscribe(callback as function)
+'       sub unsubscribe(callback as function)
+'       sub setValue(value as dynamic)     ' fires only if value changed
+'       function getValue() as dynamic
+'   end class
+class Observable
+    public field as string = ""
+    public value as dynamic = invalid
+    public subscribers as object = []
+
+    sub new(field as string, initial as dynamic)
+        m.field = field
+        m.value = initial
+        m.subscribers = []
+    end sub
+
+    sub subscribe(callback as function)
+        m.subscribers.push(callback)
+    end sub
+
+    sub unsubscribe(callback as function)
+        kept = []
+        for each cb in m.subscribers
+            if not (cb = callback) then kept.push(cb)
+        end for
+        m.subscribers = kept
+    end sub
+
+    sub setValue(value as dynamic)
+        if m.value = value then return
+        m.value = value
+        for each cb in m.subscribers
+            cb(m.field, m.value)
+        end for
+    end sub
+
+    function getValue() as dynamic
+        return m.value
+    end function
+end class
+
+' --------------------------------------------------------------------
+' Challenge 2 — class EventBus (many fields, one container)
+' --------------------------------------------------------------------
+'
+' Implement a small store keyed by field name, like Roku's per-field
+' observers on a node.
+'
+'   class EventBus
+'       slots as object         ' { key: { value, subscribers[] } }
+'       sub observe(key as string, callback as function)
+'       sub unobserve(key as string, callback as function)
+'       sub setValue(key as string, value as dynamic)
+'       function getValue(key as string) as dynamic
+'   end class
+'
+' Note: methods are named `setValue` / `getValue` (not `set` / `get`)
+' because `set` and `get` overlap with BrightScript / BrighterScript
+' implicit accessors on some node-like AAs and can confuse the
+' transpiler. Avoid those exact names on AA-method classes.
+class EventBus
+    public slots as object = {}
+
+    sub new()
+        m.slots = {}
+    end sub
+
+    ' --- Senior BrightScript gotcha used in this class ---
+    '
+    ' `roAssociativeArray` has BUILT-IN METHODS reachable through bracket
+    ' indexing: count, clear, keys, lookup, doesExist, append, delete...
+    ' So `m.slots["count"]` does NOT return `invalid` when "count" hasn't
+    ' been set — it returns the built-in `count` function! That breaks
+    ' `if m.slots[key] = invalid` as a "is this key present?" check.
+    '
+    ' Correct membership check on an AA: `m.slots.doesExist(key)`.
+    ' That's a method call, so it never collides with key names.
+    sub observe(key as string, callback as function)
+        if not m.slots.doesExist(key) then
+            m.slots[key] = { value: invalid, subs: [] }
+        end if
+        m.slots[key].subs.push(callback)
+    end sub
+
+    sub unobserve(key as string, callback as function)
+        if not m.slots.doesExist(key) then return
+        kept = []
+        for each cb in m.slots[key].subs
+            if not (cb = callback) then kept.push(cb)
+        end for
+        m.slots[key].subs = kept
+    end sub
+
+    sub setValue(key as string, value as dynamic)
+        if not m.slots.doesExist(key) then
+            m.slots[key] = { value: value, subs: [] }
+            return
+        end if
+        if m.slots[key].value = value then return
+        m.slots[key].value = value
+        for each cb in m.slots[key].subs
+            cb(key, value)
+        end for
+    end sub
+
+    function getValue(key as string) as dynamic
+        if not m.slots.doesExist(key) then return invalid
+        return m.slots[key].value
+    end function
+end class
+
+' --------------------------------------------------------------------
+' Reactions used by Main()
+' --------------------------------------------------------------------
+sub onCounter(field as string, value as dynamic)
+    print "  [onCounter] " ; field ; " -> " ; value
+end sub
+
+sub alsoOnCounter(field as string, value as dynamic)
+    print "  [also]      " ; field ; " -> " ; value
+end sub
+
+sub onTitle(field as string, value as dynamic)
+    print "  [title]     " ; value
+end sub
+
+sub onCount(field as string, value as dynamic)
+    print "  [count]     " ; value
+end sub
+
+' --------------------------------------------------------------------
+' Entry point
+' --------------------------------------------------------------------
+sub Main()
+    ' --- Challenge 1 ---
+    obs = new Observable("counter", 0)
+    obs.subscribe(onCounter)
+    print "[challenge 1] subscribed; setValue(5) fires once -> "
+    obs.setValue(5)
+
+    ' --- Challenge 2 (equal-value suppression) ---
+    print ""
+    print "[challenge 2] setValue(5) again is a no-op (equal)"
+    obs.setValue(5)
+
+    ' --- Challenge 3 (two subscribers) ---
+    print ""
+    print "[challenge 3] two subscribers; one setValue -> both fire"
+    obs.subscribe(alsoOnCounter)
+    obs.setValue(6)
+
+    ' --- Challenge 4 (unsubscribe) ---
+    print ""
+    print "[challenge 4] unsubscribe alsoOnCounter; only [onCounter] fires"
+    obs.unsubscribe(alsoOnCounter)
+    obs.setValue(7)
+
+    ' --- Challenge 5 (EventBus, many fields) ---
+    print ""
+    print "[challenge 5] EventBus: title fires title observers, count fires count observers"
+    bus = new EventBus()
+    bus.observe("title", onTitle)
+    bus.observe("count", onCount)
+    bus.setValue("title", "Inception")
+    bus.setValue("count", 6)
+    bus.setValue("title", "Inception")   ' no fire (equal)
+end sub
