@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Day 3 / 2.1 — init() lifecycle and m.top (XML half)
+
+  Runs in: BrightScript Simulator (or real device).
+
+  init() contract:
+    - Called exactly ONCE per component instance, on construction.
+    - Called BEFORE the parent's attribute-style writes land on the
+      interface fields. To react to those values use observeField
+      from inside init() and let the observer fire (see 3.1).
+    - Runs on the render thread (unless this component extends Task).
+    - You CANNOT do long blocking work here; the scene cannot draw
+      until init returns.
+
+  m, m.top, m.global:
+    - `m`         per-instance association array. Survives across all
+                  subs in this .brs FOR THIS INSTANCE. Store cached
+                  node references and screen-local state here.
+    - `m.top`     one specific key on `m`, populated by the platform.
+                  It points to this component's ROOT node — never the
+                  channel's Scene unless this component IS the Scene.
+    - `m.global`  shared `roSGNode` every component in the scene sees
+                  as the same instance. Covered in 2.3.
+
+  Same field declared here is used in 1.2 to make the print line
+  meaningful.
+-->
+<component name="InitLifecycleDemo" extends="Group">
+
+    <script type="text/brightscript" uri="pkg:/components/InitLifecycleDemo.brs" />
+
+    <interface>
+        <field id="label" type="string" value="(unset)" />
+    </interface>
+</component>

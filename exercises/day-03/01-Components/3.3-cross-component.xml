@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Day 3 / 3.3 — Cross-component communication via m.global (XML half)
+
+  Runs in: BrightScript Simulator (or real device).
+
+  When two components are siblings (neither is the other's parent),
+  passing data through interface fields would force the common parent
+  to relay every message. m.global avoids that: it is a single
+  scene-wide roSGNode every component sees as the same instance.
+
+  Typical setup:
+    1. The Scene's init() declares the shared fields ONCE:
+          m.global.addField("currentMovieId", "integer", false)
+          m.global.addField("appTheme",       "string",  false)
+    2. Any component reads or writes them by name:
+          m.global.currentMovieId = 42
+    3. Any component subscribes from anywhere:
+          m.global.observeField("currentMovieId", "onMovieChanged")
+
+  m.global is essentially an EventBus the platform gives you for free.
+  Keep it lean: SHARED app state only, not screen-local UI state.
+
+  This demo writes its own component name plus a payload into a global
+  "lastEmitter" field whenever simulateEmit() is called.
+-->
+<component name="CrossComponentDemo" extends="Group">
+    <script type="text/brightscript" uri="pkg:/components/CrossComponentDemo.brs" />
+</component>

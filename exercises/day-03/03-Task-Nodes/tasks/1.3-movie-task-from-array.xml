@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Day 3 / 03 / Exercise 5 — Build ContentNode tree from a string array (XML half)
+
+  Same MovieTask component; loadMovies() now delegates to a helper that
+  converts plain data into the tree RowList expects.
+
+  Replace components/tasks/MovieTask.{xml,brs} with this pair for Exercise 5.
+-->
+<component name="MovieTask" extends="Task">
+
+    <script type="text/brightscript" uri="pkg:/components/tasks/MovieTask.brs" />
+
+    <interface>
+        <field id="content" type="node" />
+    </interface>
+
+</component>

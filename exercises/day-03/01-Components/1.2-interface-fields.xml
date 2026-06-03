@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Day 3 / 1.2 — Interface fields (XML half)
+
+  Runs in: BrightScript Simulator (or real device).
+
+  <interface> declares the PUBLIC API of your component. Each <field>
+  is a property the parent can write/read; the component can observe
+  it to react. Anything NOT declared in <interface> is private — the
+  parent cannot see it.
+
+  Field types must match Roku's known types:
+    string, integer, float, boolean, color, time
+    array, assocarray
+    node           any SceneGraph node
+    vector2d       [x, y] number pair
+
+  Optional <field> attributes:
+    value="..."          default value (string-coerced to the declared type)
+    alwaysNotify="true"  observer fires on EVERY write, including equal-value
+    alias="<id>.<field>" forwards reads/writes to a declared child's field
+                         (covered later in section 2 / 3)
+
+  Mental model: <interface> is to a SceneGraph component what `props`
+  is to a React component (with two-way binding, since the parent can
+  read the field back).
+-->
+<component name="InterfaceFieldsDemo" extends="Group">
+
+    <script type="text/brightscript" uri="pkg:/components/InterfaceFieldsDemo.brs" />
+
+    <interface>
+        <field id="title"  type="string"  value="(no title set)" />
+        <field id="rating" type="float"   value="0.0" />
+        <field id="is4k"   type="boolean" value="false" />
+    </interface>
+</component>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Day 3 / 3.2 — Child-to-parent via interface field (XML half)
+
+  Runs in: BrightScript Simulator (or real device).
+
+  The reverse direction: the CHILD writes its own interface field;
+  the PARENT observes it. Same mechanism, opposite arrow.
+
+  Parent side (e.g. inside MainScene.brs):
+    child = m.top.findNode("emitter")
+    child.observeField("clickCount", "onChildClicked")
+
+  Child side (this file's .brs half):
+    when something happens internally, bump the outbound field:
+        m.top.clickCount = m.top.clickCount + 1
+
+  Conventions seen in real channels:
+    - A "command" field declared with alwaysNotify=true so even a
+      second identical write fires (e.g. MarkupGrid's itemSelected,
+      which doesn't move between presses).
+    - A "completed" field carrying an AA payload (Task.response is
+      exactly this).
+    - A simple integer counter the parent treats as a click signal —
+      what this demo uses.
+
+  Why alwaysNotify=true here:
+    Without it, writing 1 then 1 again would suppress the second
+    observer call. For "the user pressed the button again" that's
+    wrong. With alwaysNotify=true, every write fires.
+-->
+<component name="ChildToParentDemo" extends="Group">
+
+    <script type="text/brightscript" uri="pkg:/components/ChildToParentDemo.brs" />
+
+    <interface>
+        <field id="clickCount" type="integer" alwaysNotify="true" value="0" />
+    </interface>
+</component>

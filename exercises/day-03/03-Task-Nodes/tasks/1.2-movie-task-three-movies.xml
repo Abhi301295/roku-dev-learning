@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Day 3 / 03 / Exercise 4 — MovieTask returns three movies (XML half)
+
+  Same component name and interface as 1.1. When advancing to Exercise 4,
+  REPLACE the copies under components/tasks/ with this pair (do not keep
+  two MovieTask definitions in the same build).
+
+  Expected onMoviesLoaded child count: 3
+  Titles: Interstellar, Inception, Oppenheimer
+-->
+<component name="MovieTask" extends="Task">
+
+    <script type="text/brightscript" uri="pkg:/components/tasks/MovieTask.brs" />
+
+    <interface>
+        <field id="content" type="node" />
+    </interface>
+
+</component>

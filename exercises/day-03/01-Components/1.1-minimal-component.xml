@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Day 3 / 1.1 — Minimal SceneGraph component (XML half)
+
+  Runs in: BrightScript Simulator (or real device). The brs CLI cannot
+  instantiate XML components.
+
+  Anatomy of the smallest possible custom component:
+
+    <?xml ... ?>          XML 1.0 prolog. Required for every component file.
+    <component
+       name="X"           Component type name. Parents refer to this name
+                          in their own <children>: <X id="..." />.
+       extends="Y">       The base type to start from. Common bases:
+                            Group     plain container (most UI components)
+                            Scene     the root of a channel
+                            Task      background worker on its own thread
+                            Label     a wrapped Label with extra fields
+      <script uri="..."/> Path to the .brs file whose `sub init()` runs
+                          on construction. By Roku convention live .brs
+                          files sit under pkg:/components/<Name>.brs.
+    </component>
+
+  This file declares NO interface fields, NO children, NO custom fields.
+  All it does is print one line when init() fires, to prove the platform
+  did construct the component.
+
+  To sideload from day-3-implementation:
+    1. Copy this file to components/MinimalComponent.xml
+    2. Copy 1.1-minimal-component.brs to components/MinimalComponent.brs
+    3. Add <MinimalComponent /> inside your Scene's <children>
+    4. Build + sideload; watch the simulator console for "[1.1] ..."
+-->
+<component name="MinimalComponent" extends="Group">
+    <script type="text/brightscript" uri="pkg:/components/MinimalComponent.brs" />
+</component>

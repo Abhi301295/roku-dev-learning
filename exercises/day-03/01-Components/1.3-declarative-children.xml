@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Day 3 / 1.3 — Declarative children (XML half)
+
+  Runs in: BrightScript Simulator (or real device).
+
+  <children> declares the visual tree of this component IN XML, instead
+  of building it programmatically with appendChild() in init(). For UI
+  components this is almost always the cleaner choice:
+
+    Pros of declaring children in XML:
+      - layout sits next to the component definition
+      - the platform builds and attaches children BEFORE init() runs
+      - findNode("id") works inside init() without further setup
+      - the XML is faster to skim than init() code that builds nodes
+
+    When you'd build children programmatically instead:
+      - count depends on data (MarkupGrid item rows, dynamic lists)
+      - the children come from a Task response (build them in the
+        observer, then `m.someContainer.appendChild(newChild)`)
+
+  Each element here is itself a node type. `id="..."` makes it
+  reachable via `m.top.findNode("...")` from the BrightScript half.
+
+  This component renders a dark card with a title and tagline.
+-->
+<component name="DeclarativeChildrenDemo" extends="Group">
+
+    <script type="text/brightscript" uri="pkg:/components/DeclarativeChildrenDemo.brs" />
+
+    <children>
+        <Rectangle id="background"
+            width="400"
+            height="120"
+            color="0x1A2238FF" />
+
+        <Label id="titleLabel"
+            text=""
+            translation="[20, 16]"
+            color="0xFFFFFFFF">
+            <Font role="font" size="32" />
+        </Label>
+
+        <Label id="taglineLabel"
+            text=""
+            translation="[20, 60]"
+            color="0x9BB1D6FF">
+            <Font role="font" size="20" />
+        </Label>
+    </children>
+</component>

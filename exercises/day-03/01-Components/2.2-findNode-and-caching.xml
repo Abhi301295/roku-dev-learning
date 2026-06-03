@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Day 3 / 2.2 — findNode and node caching (XML half)
+
+  Runs in: BrightScript Simulator (or real device).
+
+  findNode(id) walks the component's tree looking for a node whose
+  `id="..."` matches. The walk is breadth-first but the cost grows
+  with tree size and depth, so:
+
+    DO:    call findNode ONCE in init() for every child you need, and
+           store the reference on `m` (e.g. m.titleLabel).
+    DON'T: call findNode inside an observer / animation tick callback
+           / per-key-press handler. That repeats the tree walk every
+           time the user moves a finger.
+
+  Caching node references on `m` is the SceneGraph equivalent of
+  React's `useRef`: grab the reference once, never query the tree
+  again at runtime.
+
+  This component lays out a "movie info card": a frame plus four
+  stacked labels.
+-->
+<component name="FindNodeDemo" extends="Group">
+
+    <script type="text/brightscript" uri="pkg:/components/FindNodeDemo.brs" />
+
+    <children>
+        <Rectangle id="frame"
+            width="600"
+            height="200"
+            color="0x1A2238FF" />
+
+        <Label id="heroLabel"
+            translation="[20, 16]"
+            color="0xFFFFFFFF">
+            <Font role="font" size="32" />
+        </Label>
+
+        <Label id="directorLabel"
+            translation="[20, 70]"
+            color="0x9BB1D6FF">
+            <Font role="font" size="20" />
+        </Label>
+
+        <Label id="ratingLabel"
+            translation="[20, 110]"
+            color="0x9BB1D6FF">
+            <Font role="font" size="20" />
+        </Label>
+
+        <Label id="yearLabel"
+            translation="[20, 150]"
+            color="0x9BB1D6FF">
+            <Font role="font" size="20" />
+        </Label>
+    </children>
+</component>

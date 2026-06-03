@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Day 3 / 03 / Exercise 1 — Create a Task component (XML half)
+
+  Runs in: BrightScript Simulator (or real device). The brs CLI cannot
+  instantiate XML Task components.
+
+  If SceneGraph is Roku's React, Task nodes are Roku's answer to:
+
+    fetch(...)   axios(...)   useEffect(...)   React Query / SWR
+
+  Roku's hard rule: the render thread must NOT perform network I/O.
+  All blocking work (HTTP, disk, parsing) runs on a Task thread.
+
+  Task anatomy:
+    extends="Task"           dedicated worker thread (not the UI thread)
+    <interface>              what the Scene reads when work finishes
+    functionName in .brs     which sub/function Roku calls when control="RUN"
+
+  Sideload layout (day-3-implementation branch):
+    components/tasks/MovieTask.xml
+    components/tasks/MovieTask.brs
+
+  Register in manifest if your toolchain requires explicit component paths;
+  most channels pick up everything under components/ automatically.
+
+  Pair with: 2.1-home-scene.{xml,brs} on the Scene side.
+-->
+<component name="MovieTask" extends="Task">
+
+    <script type="text/brightscript" uri="pkg:/components/tasks/MovieTask.brs" />
+
+    <interface>
+        <!-- Output: a ContentNode tree the Scene assigns to RowList.content -->
+        <field id="content" type="node" />
+    </interface>
+
+</component>

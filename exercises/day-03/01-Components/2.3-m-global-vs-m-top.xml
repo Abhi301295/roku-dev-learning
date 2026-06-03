@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Day 3 / 2.3 — m.top vs m.global (XML half)
+
+  Runs in: BrightScript Simulator (or real device).
+
+  Three scopes you use inside a SceneGraph component:
+
+    m         per-instance association array. Survives across all subs
+              in this .brs FOR THIS INSTANCE. Use for cached node
+              references, screen-local state, and helpers.
+
+    m.top     the component's root node. One specific key on `m`,
+              populated by the platform before init() runs.
+
+    m.global  ONE shared roSGNode every component in the scene sees as
+              the same instance. Use for:
+                - shared session state (user, locale, theme)
+                - cross-component signalling — set a field, others
+                  observeField it from anywhere in the scene
+              Keep it lean: do not dump per-screen state here.
+
+  m.global is an roSGNode. You declare its fields by calling addField
+  the same way you would on any other node — typically in the Scene's
+  init() ONCE, then read or write them from any component.
+-->
+<component name="GlobalScopeDemo" extends="Group">
+
+    <script type="text/brightscript" uri="pkg:/components/GlobalScopeDemo.brs" />
+
+    <interface>
+        <field id="seedValue" type="string" value="hello-from-init" />
+    </interface>
+</component>

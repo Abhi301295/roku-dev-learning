@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Day 3 / 4 — Challenge: MovieBadge component (XML half)
+
+  Runs in: BrightScript Simulator (or real device).
+
+  Goal: build a self-contained MovieBadge component that:
+    - declares an interface field `movie` (assocarray with title /
+      rating / posterUri) for inbound data
+    - declares an interface field `selected` (boolean) for inbound
+      focus state (parent flips it on focus enter)
+    - declares an interface field `clickCount` (integer, alwaysNotify)
+      for an outbound "user pressed OK" signal
+    - declares its visual tree in <children>: frame + poster + title
+      + rating
+    - in the BrightScript half, caches every child once, observes its
+      own interface fields, and repaints when they change
+
+  Composition rule of thumb baked in:
+    Section 1 taught you to BUILD a component (xml + brs pair).
+    Section 2 taught you LIFECYCLE inside that component.
+    Section 3 taught you the THREE WAYS to wire to the outside world:
+      interface in (3.1), interface out (3.2), m.global for siblings
+      (3.3).
+    Section 4 (this file) puts them together in one production-shaped
+      component.
+
+  The file below is a complete reference solution. Read it, then try
+  building one from scratch before peeking again.
+
+  When you sideload it into day-3-implementation:
+    1. Copy to components/MovieBadge.xml + components/MovieBadge.brs.
+    2. In MainScene.xml, declare a few <MovieBadge id="badge0" />
+       inside the Scene's <children>.
+    3. In MainScene.brs, observe each badge's clickCount and write
+       movie / selected onto them in response to grid focus + OK.
+-->
+<component name="MovieBadge" extends="Group">
+
+    <script type="text/brightscript" uri="pkg:/components/MovieBadge.brs" />
+
+    <interface>
+        <!-- inbound from parent -->
+        <field id="movie"    type="assocarray" />
+        <field id="selected" type="boolean" value="false" />
+
+        <!-- outbound to parent -->
+        <field id="clickCount" type="integer" alwaysNotify="true" value="0" />
+    </interface>
+
+    <children>
+        <Rectangle id="frame"
+            width="220"
+            height="360"
+            color="0x1A2238FF" />
+
+        <Poster id="poster"
+            uri=""
+            translation="[10, 10]"
+            width="200"
+            height="280"
+            loadDisplayMode="scaleToFill" />
+
+        <Label id="titleLabel"
+            text=""
+            translation="[10, 296]"
+            width="200"
+            maxLines="1"
+            color="0xFFFFFFFF">
+            <Font role="font" size="22" />
+        </Label>
+
+        <Label id="ratingLabel"
+            text=""
+            translation="[10, 326]"
+            width="200"
+            color="0x9BB1D6FF">
+            <Font role="font" size="18" />
+        </Label>
+    </children>
+</component>

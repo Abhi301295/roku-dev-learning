@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Day 3 / 3.1 — Parent-to-child via interface field (XML half)
+
+  Runs in: BrightScript Simulator (or real device).
+
+  THE canonical "pass data into a child component" pattern. Same shape
+  as React props, but the value lives on a SceneGraph node, so the
+  child reacts to changes through observeField.
+
+  Parent side (e.g. inside MainScene.brs):
+    child = m.top.findNode("badge")
+    child.movie = { title: "Inception", rating: 8.8 }
+
+  Child side (this file's .brs half):
+    sub init()
+        m.top.observeField("movie", "onMovieChanged")
+    end sub
+
+    sub onMovieChanged()
+        movie = m.top.movie
+        m.titleLabel.text = movie.title
+    end sub
+
+  The interface field IS the contract: the parent doesn't know how
+  this child renders the data; the child doesn't know which parent
+  wrote it.
+
+  Field-type choice:
+    type="assocarray" lets you bundle related fields (title, rating,
+    posterUri) into ONE write. Roku never compares assocarrays for
+    equality, so an assocarray field with the same shape still fires
+    the observer on every write — no need to set alwaysNotify=true.
+-->
+<component name="ParentToChildDemo" extends="Group">
+
+    <script type="text/brightscript" uri="pkg:/components/ParentToChildDemo.brs" />
+
+    <interface>
+        <field id="movie" type="assocarray" />
+    </interface>
+
+    <children>
+        <Label id="titleLabel"
+            translation="[0, 0]"
+            color="0xFFFFFFFF">
+            <Font role="font" size="28" />
+        </Label>
+
+        <Label id="ratingLabel"
+            translation="[0, 40]"
+            color="0x9BB1D6FF">
+            <Font role="font" size="22" />
+        </Label>
+    </children>
+</component>
