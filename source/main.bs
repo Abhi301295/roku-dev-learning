@@ -14,7 +14,7 @@ sub Main()
     port = CreateObject("roMessagePort")
     screen.setMessagePort(port)
 
-    screen.CreateScene("MainScene")
+    screen.CreateScene("HomeScene")
     screen.show()
 
     ' Block until Roku tells us the screen was closed (user pressed BACK at

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Day 3 / 03 — HomeScene (test harness on day3-implementation)
+
+  Renders the flat ContentNode tree from MovieTask with a MarkupGrid +
+  the existing MovieCard. Swap MovieTask under components/tasks/ to test
+  exercises 1.1 / 1.2 / 1.3.
+-->
+<component name="HomeScene" extends="Scene">
+
+    <script type="text/brightscript" uri="pkg:/components/HomeScene.brs" />
+
+    <children>
+        <Rectangle id="background"
+            width="1280"
+            height="720"
+            color="0x101218FF" />
+
+        <Label
+            id="statusLabel"
+            translation="[80, 60]"
+            width="1100"
+            horizAlign="left"
+            color="0xFFFFFFFF"
+            text="Starting Task...">
+            <Font role="font" size="28" />
+        </Label>
+
+        <!-- MarkupGrid reads `content` as a ContentNode tree (topic 02);
+             one MovieCard per child node. -->
+        <MarkupGrid
+            id="rowList"
+            translation="[80, 140]"
+            itemComponentName="MovieCard"
+            numColumns="5"
+            numRows="1"
+            itemSize="[200, 320]"
+            itemSpacing="[30, 0]"
+            drawFocusFeedback="false" />
+    </children>
+
+</component>

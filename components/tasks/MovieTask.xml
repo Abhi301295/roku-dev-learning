@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Day 3 / 03 — MovieTask (test harness on day3-implementation)
+
+  Copied from exercises/day-03/03-Task-Nodes/tasks/1.1-movie-task.xml.
+  Swap the paired .brs with 1.2 / 1.3 to test the other exercises.
+-->
+<component name="MovieTask" extends="Task">
+
+    <script type="text/brightscript" uri="pkg:/components/tasks/MovieTask.brs" />
+
+    <interface>
+        <field id="content" type="node" />
+    </interface>
+
+</component>
