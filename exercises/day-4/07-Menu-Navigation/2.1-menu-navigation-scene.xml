@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Day 4 / 07 / Exercises 1–3 — Menu navigation (XML half)
+
+  Runs in: BrightScript Simulator (or real device). NOT the brs CLI.
+
+  Three exercises in one scene:
+
+    Exercise 1 — LabelList menu: Home, Settings, Profile
+                 Navigate with UP / DOWN (handled by LabelList focus).
+
+    Exercise 2 — Press OK on Settings
+                 itemSelected fires -> print "Selected Settings"
+
+    Exercise 3 — Press BACK on the Settings screen
+                 pop the navigation stack -> return to the menu
+
+  Screens are Groups toggled visible/invisible — Roku's manual equivalent
+  of React router.push / router.back (there is no built-in router).
+-->
+<component name="MenuNavigationScene" extends="Scene">
+
+    <script type="text/brightscript" uri="pkg:/components/MenuNavigationScene.brs" />
+
+    <children>
+        <Rectangle id="background"
+            width="1280"
+            height="720"
+            color="0x101218FF" />
+
+        <!-- Screen 1: main menu -->
+        <Group id="menuScreen">
+            <Label text="Main Menu"
+                translation="[80, 60]"
+                color="0xFFFFFFFF">
+                <Font role="font" size="48" />
+            </Label>
+
+            <LabelList id="mainMenu"
+                translation="[80, 160]"
+                itemSize="[360, 56]"
+                numRows="5"
+                color="0x9BB1D6FF"
+                focusedColor="0xFFFFFFFF">
+                <Font role="font" size="30" />
+                <Font role="focusedFont" size="30" />
+            </LabelList>
+        </Group>
+
+        <!-- Screen 2: pushed after selecting Settings -->
+        <Group id="settingsScreen" visible="false">
+            <Label text="Settings"
+                translation="[80, 60]"
+                color="0xFFFFFFFF">
+                <Font role="font" size="48" />
+            </Label>
+
+            <Label text="Notifications: On"
+                translation="[80, 160]"
+                color="0x9BB1D6FF">
+                <Font role="font" size="28" />
+            </Label>
+
+            <Label text="Autoplay: Off"
+                translation="[80, 220]"
+                color="0x9BB1D6FF">
+                <Font role="font" size="28" />
+            </Label>
+
+            <Label id="settingsHint"
+                text="BACK to return"
+                translation="[80, 640]"
+                color="0xF1C232FF">
+                <Font role="font" size="26" />
+            </Label>
+        </Group>
+
+        <!-- Screen 3: pushed after selecting Profile -->
+        <Group id="profileScreen" visible="false">
+            <Label text="Profile"
+                translation="[80, 60]"
+                color="0xFFFFFFFF">
+                <Font role="font" size="48" />
+            </Label>
+
+            <Label text="Signed in as: learner@roku.dev"
+                translation="[80, 160]"
+                color="0x9BB1D6FF">
+                <Font role="font" size="28" />
+            </Label>
+
+            <Label text="BACK to return"
+                translation="[80, 640]"
+                color="0xF1C232FF">
+                <Font role="font" size="26" />
+            </Label>
+        </Group>
+
+        <Label id="statusLabel"
+            text=""
+            translation="[480, 160]"
+            width="700"
+            color="0xF1C232FF">
+            <Font role="font" size="26" />
+        </Label>
+    </children>
+
+</component>

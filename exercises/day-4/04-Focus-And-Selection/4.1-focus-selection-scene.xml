@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Day 4 / 04 / Exercise 4 — Focus & Selection (XML half)
+
+  Runs in: BrightScript Simulator (or real device). NOT the brs CLI.
+
+  This scene exists to make the two observable navigation fields visible:
+
+    itemFocused   index the user is highlighting (changes on scroll)
+    itemSelected  index the user pressed OK on   (changes on select)
+
+  Same MarkupGrid setup as Exercise 2; the lesson is entirely in the
+  .brs observers, which print:
+
+    Focused: <title>
+    Selected: <title>
+
+  Two on-screen labels mirror the latest focus and selection so you can
+  watch the behaviour without a console.
+-->
+<component name="FocusSelectionScene" extends="Scene">
+
+    <script type="text/brightscript" uri="pkg:/components/FocusSelectionScene.brs" />
+
+    <children>
+        <Rectangle id="background"
+            width="1280"
+            height="720"
+            color="0x101218FF" />
+
+        <Label id="titleLabel"
+            text="Focus &amp; Selection"
+            translation="[80, 50]"
+            color="0xFFFFFFFF">
+            <Font role="font" size="48" />
+        </Label>
+
+        <MarkupGrid id="movieGrid"
+            translation="[80, 170]"
+            itemComponentName="StandardGridItemComponent"
+            numColumns="5"
+            numRows="1"
+            itemSize="[200, 320]"
+            itemSpacing="[24, 0]" />
+
+        <Label id="focusedLabel"
+            text="Focused: -"
+            translation="[80, 540]"
+            color="0x9BB1D6FF">
+            <Font role="font" size="30" />
+        </Label>
+
+        <Label id="selectedLabel"
+            text="Selected: -"
+            translation="[80, 590]"
+            color="0xF1C232FF">
+            <Font role="font" size="30" />
+        </Label>
+    </children>
+
+</component>

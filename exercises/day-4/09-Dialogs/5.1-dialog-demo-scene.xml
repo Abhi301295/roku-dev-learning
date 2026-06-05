@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Day 4 / 09 / Exercise 5 — Dialog demo scene (XML half)
+
+  Runs in: BrightScript Simulator (or real device). NOT the brs CLI.
+
+  Demonstrates the reusable AppDialog component simulating a network
+  failure:
+
+    Title:   Network Error
+    Message: Unable to reach the server. Retry?
+    Buttons: Retry | Cancel
+
+  On boot the Scene shows the dialog. The parent observes
+  buttonSelected and prints which button was pressed.
+
+  Sideload requires BOTH files:
+    components/AppDialog.xml + AppDialog.brs
+    components/DialogDemoScene.xml + DialogDemoScene.brs
+-->
+<component name="DialogDemoScene" extends="Scene">
+
+    <script type="text/brightscript" uri="pkg:/components/DialogDemoScene.brs" />
+
+    <children>
+        <Rectangle id="background"
+            width="1280"
+            height="720"
+            color="0x101218FF" />
+
+        <Label text="Catalog"
+            translation="[80, 60]"
+            color="0xFFFFFFFF">
+            <Font role="font" size="48" />
+        </Label>
+
+        <Label id="statusLabel"
+            text="Simulating network request..."
+            translation="[80, 140]"
+            color="0x9BB1D6FF">
+            <Font role="font" size="28" />
+        </Label>
+
+        <AppDialog id="errorDialog" />
+    </children>
+
+</component>

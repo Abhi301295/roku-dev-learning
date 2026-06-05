@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Day 4 / 03 / Exercise 3 — Home rows in a RowList (XML half)
+
+  Runs in: BrightScript Simulator (or real device). NOT the brs CLI.
+
+  RowList is the most important catalog component: it renders the
+  Netflix-style "rows of cards" home screen. Its `content` is a
+  TWO-LEVEL ContentNode tree:
+
+    Home                  <- rowList.content (root)
+     ├── Trending         <- a ROW (title = section header)
+     │    ├── Interstellar <- a CARD inside that row
+     │    └── Inception
+     └── Sci-Fi
+          ├── Arrival
+          └── Dune
+
+  Level-1 children become ROWS; their `title` is the section header.
+  Level-2 children become the CARDS inside each row.
+
+  Key layout fields:
+    rowLabelOffset    where the section header sits relative to the row
+    showRowLabel      whether to draw the section header (per row)
+    itemSize          [width, height] of one row's viewport
+    rowItemSize       [[w, h]] — size of cards, one entry per row (or one
+                      shared entry applied to all rows)
+    rowItemSpacing    [[h, v]] gap between cards within a row
+    itemComponentName component used to render each card
+-->
+<component name="HomeRowsScene" extends="Scene">
+
+    <script type="text/brightscript" uri="pkg:/components/HomeRowsScene.brs" />
+
+    <children>
+        <Rectangle id="background"
+            width="1280"
+            height="720"
+            color="0x101218FF" />
+
+        <Label id="titleLabel"
+            text="Home"
+            translation="[80, 50]"
+            color="0xFFFFFFFF">
+            <Font role="font" size="48" />
+        </Label>
+
+        <!-- One shared rowItemSize entry applies to every row. The card
+             component is the built-in StandardGridItemComponent so no
+             extra files are needed to sideload. -->
+        <RowList id="rowList"
+            translation="[80, 140]"
+            itemComponentName="StandardGridItemComponent"
+            numRows="2"
+            rowHeights="[300, 300]"
+            itemSize="[1120, 300]"
+            rowItemSize="[[200, 260]]"
+            rowItemSpacing="[[24, 0]]"
+            rowLabelOffset="[[0, 0]]"
+            showRowLabel="[true, true]"
+            rowLabelColor="0xFFFFFFFF" />
+
+        <Label id="statusLabel"
+            text=""
+            translation="[80, 660]"
+            color="0xF1C232FF">
+            <Font role="font" size="26" />
+        </Label>
+    </children>
+
+</component>

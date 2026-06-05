@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Day 4 / 02 / Exercise 2 — Nolan movies in a MarkupGrid (XML half)
+
+  Runs in: BrightScript Simulator (or real device). NOT the brs CLI.
+
+  A MarkupGrid is Roku's visual `movies.map(...)`: a flat grid of item
+  components, one per ContentNode child. Unlike LabelList (text rows), a
+  MarkupGrid renders a real component per item — a poster, a title, a
+  rating line, etc.
+
+  Here we use the BUILT-IN `StandardGridItemComponent`, which knows how
+  to read standard ContentNode fields:
+
+    title         -> shown under the poster
+    hdGridPosterUrl / hdPosterUrl -> the poster image
+
+  Using the built-in item component means there's NO extra .xml/.brs to
+  copy when sideloading — just this scene pair.
+
+  Movies (single row of five):
+    Interstellar, Inception, Oppenheimer, Dunkirk, Tenet
+
+  Layout fields that matter:
+    numRows / numColumns   grid dimensions (1 row x 5 columns here)
+    itemSize               [width, height] of one card
+    itemSpacing            [horizontal, vertical] gap between cards
+-->
+<component name="NolanGridScene" extends="Scene">
+
+    <script type="text/brightscript" uri="pkg:/components/NolanGridScene.brs" />
+
+    <children>
+        <Rectangle id="background"
+            width="1280"
+            height="720"
+            color="0x101218FF" />
+
+        <Label id="titleLabel"
+            text="Christopher Nolan"
+            translation="[80, 60]"
+            color="0xFFFFFFFF">
+            <Font role="font" size="48" />
+        </Label>
+
+        <!-- MarkupGrid renders one StandardGridItemComponent per child of
+             `content`. numColumns=5, numRows=1 => a single horizontal row. -->
+        <MarkupGrid id="movieGrid"
+            translation="[80, 180]"
+            itemComponentName="StandardGridItemComponent"
+            numColumns="5"
+            numRows="1"
+            itemSize="[200, 320]"
+            itemSpacing="[24, 0]" />
+
+        <Label id="statusLabel"
+            text=""
+            translation="[80, 640]"
+            color="0xF1C232FF">
+            <Font role="font" size="26" />
+        </Label>
+    </children>
+
+</component>

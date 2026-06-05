@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Day 4 / 01 / Exercise 1 — Categories in a LabelList (XML half)
+
+  Runs in: BrightScript Simulator (or real device). NOT the brs CLI.
+
+  A LabelList is the simplest content list Roku ships: it renders ONE
+  text row per ContentNode child, reading each child's `title`. It is the
+  right component for sidebars, settings menus, and category pickers —
+  anywhere you want a vertical column of selectable text.
+
+  Target list:
+
+    Categories
+    ├── Movies
+    ├── TV Shows
+    ├── Sports
+    └── Kids
+
+  Two things matter in this XML:
+
+    1. The LabelList has an `id` so the .brs half can findNode it and set
+       `.content`.
+    2. Its visual fields (itemSize, focus colors, font) are declared here
+       so init() can stay focused on DATA, not layout.
+
+  The .brs half builds the four category nodes and binds them.
+-->
+<component name="CategoriesScene" extends="Scene">
+
+    <script type="text/brightscript" uri="pkg:/components/CategoriesScene.brs" />
+
+    <children>
+        <Rectangle id="background"
+            width="1280"
+            height="720"
+            color="0x101218FF" />
+
+        <Label id="titleLabel"
+            text="Categories"
+            translation="[80, 60]"
+            color="0xFFFFFFFF">
+            <Font role="font" size="48" />
+        </Label>
+
+        <!-- LabelList renders one row per ContentNode child (its title).
+             itemSize is [width, height] of a single row. -->
+        <LabelList id="categoryList"
+            translation="[80, 160]"
+            itemSize="[360, 56]"
+            numRows="6"
+            color="0x9BB1D6FF"
+            focusedColor="0xFFFFFFFF">
+            <Font role="font" size="30" />
+            <Font role="focusedFont" size="30" />
+        </LabelList>
+
+        <Label id="statusLabel"
+            text=""
+            translation="[80, 640]"
+            color="0xF1C232FF">
+            <Font role="font" size="26" />
+        </Label>
+    </children>
+
+</component>

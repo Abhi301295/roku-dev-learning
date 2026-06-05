@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Day 4 / 08 / Exercise 4 — Navigation stack: Home → Details → Player
+
+  Runs in: BrightScript Simulator (or real device). NOT the brs CLI.
+
+  The full three-screen flow every streaming app uses:
+
+    Home            pick a movie
+      ↓
+    Movie Details   read synopsis, press Play
+      ↓
+    Player          watch (BACK returns to Details)
+
+  There is no built-in router. You manage a stack manually:
+
+    m.navStack = ["home"]
+    pushScreen("details")
+    pushScreen("player")
+    popScreen() on BACK
+
+  Same pattern as MainScene.brs in the channel (browse -> player overlay).
+-->
+<component name="MovieFlowScene" extends="Scene">
+
+    <script type="text/brightscript" uri="pkg:/components/MovieFlowScene.brs" />
+
+    <children>
+        <Rectangle id="background"
+            width="1280"
+            height="720"
+            color="0x101218FF" />
+
+        <!-- Screen 1: Home — one movie to select -->
+        <Group id="homeScreen">
+            <Label text="Home"
+                translation="[80, 50]"
+                color="0xFFFFFFFF">
+                <Font role="font" size="48" />
+            </Label>
+
+            <MarkupGrid id="homeGrid"
+                translation="[80, 160]"
+                itemComponentName="StandardGridItemComponent"
+                numColumns="3"
+                numRows="1"
+                itemSize="[200, 320]"
+                itemSpacing="[24, 0]" />
+
+            <Label text="OK: open details"
+                translation="[80, 640]"
+                color="0x9BB1D6FF">
+                <Font role="font" size="24" />
+            </Label>
+        </Group>
+
+        <!-- Screen 2: Movie Details -->
+        <Group id="detailsScreen" visible="false">
+            <Label id="detailsTitle"
+                text=""
+                translation="[80, 50]"
+                color="0xFFFFFFFF">
+                <Font role="font" size="48" />
+            </Label>
+
+            <Label id="detailsSynopsis"
+                text=""
+                translation="[80, 140]"
+                width="1000"
+                wrap="true"
+                color="0x9BB1D6FF">
+                <Font role="font" size="26" />
+            </Label>
+
+            <LabelList id="detailsActions"
+                translation="[80, 400]"
+                itemSize="[280, 52]"
+                numRows="3"
+                color="0x9BB1D6FF"
+                focusedColor="0xF1C232FF">
+                <Font role="font" size="28" />
+                <Font role="focusedFont" size="28" />
+            </LabelList>
+        </Group>
+
+        <!-- Screen 3: Player -->
+        <Group id="playerScreen" visible="false">
+            <Rectangle width="1280"
+                height="720"
+                color="0x000000FF" />
+
+            <Label id="playerTitle"
+                text=""
+                translation="[80, 60]"
+                color="0xFFFFFFFF">
+                <Font role="font" size="40" />
+            </Label>
+
+            <Label text="Playing... (BACK to return to details)"
+                translation="[80, 140]"
+                color="0x9BB1D6FF">
+                <Font role="font" size="28" />
+            </Label>
+        </Group>
+
+        <Label id="stackLabel"
+            text=""
+            translation="[80, 680]"
+            color="0xF1C232FF">
+            <Font role="font" size="22" />
+        </Label>
+    </children>
+
+</component>

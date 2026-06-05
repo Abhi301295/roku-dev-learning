@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Day 4 / 06 / Topic 1 — Focus System (XML half)
+
+  Runs in: BrightScript Simulator (or real device). NOT the brs CLI.
+
+  Roku has no mouse, no touch, no browser tab order. ONE node in the
+  scene tree has focus at any time. The remote drives focus with
+  UP / DOWN / LEFT / RIGHT; OK activates the focused node.
+
+  Two concepts this scene teaches:
+
+    setFocus(true)   give a node the remote's attention
+    hasFocus()       ask whether a node currently holds focus
+
+  Layout: two LabelLists side by side. The .brs half gives listA focus
+  on boot, then uses onKeyEvent to move focus between them when you
+  press LEFT / RIGHT at the edges.
+-->
+<component name="FocusBasicsScene" extends="Scene">
+
+    <script type="text/brightscript" uri="pkg:/components/FocusBasicsScene.brs" />
+
+    <children>
+        <Rectangle id="background"
+            width="1280"
+            height="720"
+            color="0x101218FF" />
+
+        <Label id="titleLabel"
+            text="Focus System"
+            translation="[80, 50]"
+            color="0xFFFFFFFF">
+            <Font role="font" size="48" />
+        </Label>
+
+        <Label id="hintLabel"
+            text="LEFT / RIGHT to move focus between lists"
+            translation="[80, 120]"
+            color="0x9BB1D6FF">
+            <Font role="font" size="24" />
+        </Label>
+
+        <LabelList id="listA"
+            translation="[80, 200]"
+            itemSize="[320, 52]"
+            numRows="4"
+            color="0x9BB1D6FF"
+            focusedColor="0xFFFFFFFF">
+            <Font role="font" size="28" />
+            <Font role="focusedFont" size="28" />
+        </LabelList>
+
+        <LabelList id="listB"
+            translation="[480, 200]"
+            itemSize="[320, 52]"
+            numRows="4"
+            color="0x9BB1D6FF"
+            focusedColor="0xF1C232FF">
+            <Font role="font" size="28" />
+            <Font role="focusedFont" size="28" />
+        </LabelList>
+
+        <Label id="statusLabel"
+            text=""
+            translation="[80, 620]"
+            color="0xF1C232FF">
+            <Font role="font" size="26" />
+        </Label>
+    </children>
+
+</component>

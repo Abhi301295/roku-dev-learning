@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Day 4 / 09 — Reusable dialog component (XML half)
+
+  A production-shaped modal you can drop into any Scene:
+
+    <AppDialog id="errorDialog" />
+
+  Parent sets interface fields:
+    dialog.title = "Network Error"
+    dialog.message = "Unable to reach the server."
+    dialog.visible = true
+
+  Parent observes:
+    dialog.observeField("buttonSelected", "onDialogButton")
+
+  Child bumps buttonSelected (alwaysNotify) when the user presses OK
+  on a button row. Index 0 = first button ("Retry"), 1 = "Cancel".
+
+  Dialog types this pattern covers:
+    Error dialog       — title + message + Retry
+    Confirmation       — "Are you sure?" + Yes / No
+    Loading (variant)  — visible=true, message="Loading...", no buttons
+-->
+<component name="AppDialog" extends="Group">
+
+    <script type="text/brightscript" uri="pkg:/components/AppDialog.brs" />
+
+    <interface>
+        <field id="title" type="string" />
+        <field id="message" type="string" />
+        <field id="visible" type="boolean" />
+        <field id="buttonSelected" type="integer" alwaysNotify="true" />
+    </interface>
+
+    <children>
+        <!-- Dim the content behind the card -->
+        <Rectangle id="scrim"
+            width="1280"
+            height="720"
+            color="0x000000CC"
+            visible="false" />
+
+        <Group id="card" translation="[340, 200]" visible="false">
+            <Rectangle id="cardBackground"
+                width="600"
+                height="320"
+                color="0x1B2030FF" />
+
+            <Label id="titleLabel"
+                text=""
+                translation="[32, 28]"
+                width="536"
+                color="0xFFFFFFFF">
+                <Font role="font" size="36" />
+            </Label>
+
+            <Label id="messageLabel"
+                text=""
+                translation="[32, 90]"
+                width="536"
+                wrap="true"
+                color="0x9BB1D6FF">
+                <Font role="font" size="26" />
+            </Label>
+
+            <LabelList id="buttonList"
+                translation="[32, 220]"
+                itemSize="[260, 52]"
+                numRows="2"
+                color="0x9BB1D6FF"
+                focusedColor="0xF1C232FF">
+                <Font role="font" size="26" />
+                <Font role="focusedFont" size="26" />
+            </LabelList>
+        </Group>
+    </children>
+
+</component>
